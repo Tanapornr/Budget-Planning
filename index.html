@@ -1,83 +1,237 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <title>ระบบงบประมาณ วมว.</title>
-    <style>
-        table { border-collapse: collapse; width: 100%; font-size: 14px; }
-        th, td { border: 1px solid black; padding: 6px; text-align: center; }
-        th { background-color: #fca503; /* สีส้มตามรูป */ color: black; }
-        .bg-light { background-color: #fdf5e6; } /* สีพื้นหลังอ่อนๆ */
-    </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบงบประมาณ วมว.</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    body { font-family: 'Sarabun', sans-serif; background-color: #f8f9fa; }
+    .navbar-custom { background-color: #2b303a; padding: 15px; }
+    .navbar-brand { color: white; font-weight: bold; }
+    .nav-link { color: #a0aabf; cursor: pointer; }
+    .nav-link:hover, .nav-link.active { color: white; }
+    .card-custom { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
+    
+    /* สไตล์ตารางที่เหมือนรูปภาพเป๊ะๆ */
+    .table-wrapper { overflow-x: auto; max-height: 65vh; border: 1px solid #ccc; }
+    #reportTable { white-space: nowrap; font-size: 0.9rem; margin-bottom: 0; }
+    
+    .bg-orange { background-color: #f6b26b !important; color: #000; border: 1px solid #999; text-align: center; vertical-align: middle; }
+    .bg-peach { background-color: #f4cccc !important; color: #000; border: 1px solid #999; text-align: center; vertical-align: middle; }
+    
+    /* ล็อกตารางตอนเลื่อน */
+    #reportTable thead { position: sticky; top: 0; z-index: 4; }
+    #reportTable thead th { position: sticky; top: 0; z-index: 4; background-clip: padding-box; }
+    #reportTable thead tr:nth-child(2) th { top: 41px; } 
+    #reportTable tbody td:first-child, #reportTable thead th:first-child { position: sticky; left: 0; z-index: 5; background-color: #fff; border-right: 2px solid #ccc; font-weight: bold; }
+    #reportTable thead th:first-child { z-index: 6; }
+    
+    #reportTable tbody tr:hover td { background-color: #f1f5f9; }
+    .num-cell { text-align: right; }
+    .row-highlight td { font-weight: bold; background-color: #e0e8ff !important; color: #000; }
+    .admin-container { max-width: 600px; margin: 20px auto; display: none; }
+  </style>
 </head>
 <body>
-    <h3 id="status" style="color: blue;">กำลังดึงข้อมูล...</h3>
 
-    <table>
-        <thead>
+  <nav class="navbar navbar-expand-lg navbar-custom">
+    <div class="container-fluid">
+      <span class="navbar-brand"><i class="fa-solid fa-chart-pie text-warning me-2"></i> วมว. Budget System</span>
+      <div class="d-flex mx-auto">
+        <a class="nav-link active me-3" id="navReport" onclick="showDashboard()">หน้ารายงานหลัก</a>
+        <a class="nav-link" id="navAdmin" onclick="loginAdmin()">จัดการเบิกจ่าย</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-3 py-3" id="mainDashboard">
+    <div class="card-custom">
+      <h4 class="fw-bold text-primary">รายงานผลการใช้จ่ายงบประมาณโครงการ วมว. ปี 2569 - 2570</h4>
+    </div>
+
+    <div class="card-custom p-0 overflow-hidden">
+      <div id="loading" class="text-center my-5">
+        <div class="spinner-border text-primary" role="status"></div><h5 class="mt-2">กำลังซิงค์ข้อมูล...</h5>
+      </div>
+      
+      <div class="table-wrapper" id="table-wrapper" style="display: none;">
+        <table class="table table-bordered mb-0" id="reportTable">
+          <thead id="tableHead">
             <tr>
-                <th rowspan="2" style="background-color: white;">ประเภทรายจ่าย</th>
-                <th rowspan="2">งบประมาณ<br>ตามแผน2569-2570</th>
-                <th rowspan="2">เบิกจ่ายสะสมรวม</th>
-                <th rowspan="2">คงเหลือสุทธิ</th>
-                <th rowspan="2" style="background-color: #e6b8af;">ระยะเวลา</th>
-                
-                <th colspan="6" style="background-color: white;">ไตรมาส 3 / 2569</th>
-                <th colspan="6" style="background-color: white;">ไตรมาส 4 / 2569</th>
-            </tr>
+              <th rowspan="2" class="bg-peach" style="min-width: 280px;">ประเภทรายจ่าย</th>
+              <th colspan="3" class="bg-orange">งบประมาณ</th>
+              <th rowspan="2" class="bg-peach" style="min-width: 80px;">ระยะเวลา</th>
+              </tr>
             <tr>
-                <th class="bg-light">เม.ย.</th>
-                <th class="bg-light">พ.ค.</th>
-                <th class="bg-light">มิ.ย.</th>
-                <th>รวม<br>ไตรมาส 3</th>
-                <th style="background-color: white;">เบิกจริง</th>
-                <th style="background-color: white;">คงเหลือ</th>
-                
-                <th class="bg-light">ก.ค.</th>
-                <th class="bg-light">ส.ค.</th>
-                <th class="bg-light">ก.ย.</th>
-                <th>รวม<br>ไตรมาส 4</th>
-                <th style="background-color: white;">เบิกจริง</th>
-                <th style="background-color: white;">คงเหลือ</th>
-            </tr>
-        </thead>
-        <tbody id="table-body">
-            </tbody>
-    </table>
+              <th class="bg-orange">ตามแผน2569-2570</th>
+              <th class="bg-orange">เบิกจ่ายสะสมรวม</th>
+              <th class="bg-orange">คงเหลือสุทธิ</th>
+              </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    <script>
-        const url = 'https://script.google.com/macros/s/AKfycbyAXl94c7Bj9GZNEOPCOUo0p42uAKA5b4o6T1ctwoQ-ej6aj5Wi7cM_ykSNO2AyGeYK/exec';
+  <div class="container admin-container" id="adminFormSection">
+    <div class="card-custom border-top border-4 border-warning">
+      <button class="btn btn-light mb-3 btn-sm" onclick="showDashboard()">⬅️ กลับหน้ารายงาน</button>
+      <h4 class="text-center text-primary fw-bold mb-4">บันทึกการเบิกจ่าย</h4>
+      
+      <form id="budgetForm" onsubmit="handleFormSubmit(event, this)">
+        <div class="mb-3">
+          <label class="form-label fw-bold">วันที่เบิกจ่าย</label>
+          <input type="date" class="form-control" name="expDate" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">หมวดรายจ่าย</label>
+          <select class="form-select" name="category" id="categoryDropdown" required onchange="updateItems()">
+            <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
+            <option value="ค่าตอบแทน">ค่าตอบแทน</option>
+            <option value="ค่าใช้สอย">ค่าใช้สอย</option>
+            </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">ชื่อรายการ</label>
+          <select class="form-select" name="itemName" id="itemDropdown" required></select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">รายละเอียด / ฎีกา</label>
+          <textarea class="form-control" name="note" rows="2"></textarea>
+        </div>
+        <div class="mb-3">
+          <label class="form-label fw-bold">จำนวนเงิน (บาท)</label>
+          <input type="number" step="0.01" class="form-control" name="amount" required>
+        </div>
+        <button type="submit" class="btn btn-warning w-100 py-2 fw-bold" id="submitBtn">บันทึกข้อมูล</button>
+      </form>
+      <div id="output" class="mt-3 text-center fw-bold"></div>
+    </div>
+  </div>
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('status').innerText = 'ดึงข้อมูลสำเร็จแล้ว! 🎉';
-                const tbody = document.getElementById('table-body');
-                
-                // คราวนี้เราเรียกข้อมูลตามลำดับคอลัมน์ A=0, B=1, C=2 ไปเรื่อยๆ
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="text-align: left;">${row[0]}</td> <td>${row[1]}</td> <td>${row[2]}</td> <td>${row[3]}</td> <td>${row[4]}</td> <td>${row[5]}</td>
-                        <td>${row[6]}</td>
-                        <td>${row[7]}</td>
-                        <td>${row[8]}</td>
-                        <td>${row[9]}</td>
-                        <td>${row[10]}</td>
-                        
-                        <td>${row[11]}</td>
-                        <td>${row[12]}</td>
-                        <td>${row[13]}</td>
-                        <td>${row[14]}</td>
-                        <td>${row[15]}</td>
-                        <td>${row[16]}</td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            })
-            .catch(error => {
-                document.getElementById('status').innerText = 'เกิดข้อผิดพลาดในการดึงข้อมูล';
-            });
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // ⭐️ 1. ใส่ URL ของคุณตรงนี้ ⭐️
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyAXl94c7Bj9GZNEOPCOUo0p42uAKA5b4o6T1ctwoQ-ej6aj5Wi7cM_ykSNO2AyGeYK/exec';
+    
+    let categoryItemMap = {};
+
+    // เปลี่ยนจาก google.script.run เป็นการใช้ fetch
+    window.onload = async function() {
+      try {
+        // ดึงข้อมูล Mapping หมวดหมู่
+        let mapRes = await fetch(API_URL + '?action=getCategoryItemMapping');
+        categoryItemMap = await mapRes.json();
+        
+        // ดึงข้อมูลตาราง
+        fetchTableData();
+      } catch (err) {
+        showError(err);
+      }
+    };
+
+    function showError(err) {
+      document.getElementById('loading').innerHTML = `<h5 class="text-danger">❌ ข้อผิดพลาด: ${err.message || err}</h5>`;
+    }
+
+    function updateItems() {
+      var cat = document.getElementById("categoryDropdown").value;
+      var itemSelect = document.getElementById("itemDropdown");
+      itemSelect.innerHTML = '<option value="" disabled selected>-- เลือกรายการ --</option>';
+      if (cat && categoryItemMap[cat]) {
+        categoryItemMap[cat].forEach(i => itemSelect.innerHTML += `<option value="${i}">${i}</option>`);
+      }
+    }
+
+    function loginAdmin() {
+      if(prompt("🔒 ใส่รหัสผ่านแอดมิน (1234):") === "1234") { 
+        document.getElementById('mainDashboard').style.display = 'none';
+        document.getElementById('adminFormSection').style.display = 'block';
+      } else { alert("❌ รหัสผิด"); }
+    }
+
+    function showDashboard() {
+      document.getElementById('mainDashboard').style.display = 'block';
+      document.getElementById('adminFormSection').style.display = 'none';
+      fetchTableData(); // เรียกข้อมูลใหม่ทุกครั้งที่กลับหน้าแรก
+    }
+
+    async function fetchTableData() {
+      document.getElementById('table-wrapper').style.display = 'none';
+      document.getElementById('loading').style.display = 'block';
+      
+      try {
+        let res = await fetch(API_URL + '?action=getMasterReportData');
+        let response = await res.json();
+        renderTable(response);
+      } catch (err) {
+        showError(err);
+      }
+    }
+
+    function renderTable(response) {
+      if(!response || response.status === "error") { showError(response.message); return; }
+      
+      const data = response.data;
+      let tbodyHtml = '';
+
+      for (let i = 2; i < data.length; i++) { 
+        let row = data[i];
+        let cellZero = String(row[0] || "");
+        if(cellZero.trim() === "" && String(row[1]||"").trim() === "") continue;
+
+        let isMain = (cellZero.indexOf("ค่า")===0 && cellZero.indexOf("-")===-1) || cellZero.indexOf("รวม")!==-1 || cellZero.indexOf("อุดหนุน")!==-1;
+        tbodyHtml += `<tr ${isMain ? 'class="row-highlight"' : ''}>`;
+        
+        for (let j = 0; j < row.length; j++) {
+          let val = row[j] || "";
+          let isNum = !isNaN(String(val).replace(/,/g, '')) && String(val).trim() !== "";
+          tbodyHtml += `<td class="${isNum ? 'num-cell' : ''}">${val}</td>`;
+        }
+        tbodyHtml += '</tr>';
+      }
+
+      document.getElementById('tableBody').innerHTML = tbodyHtml;
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('table-wrapper').style.display = 'block';
+    }
+
+    // ฟังก์ชันส่งข้อมูลฟอร์มด้วย fetch POST
+    function handleFormSubmit(event, form) {
+      event.preventDefault();
+      let btn = document.getElementById('submitBtn');
+      btn.innerHTML = '⏳ กำลังบันทึก...'; btn.disabled = true;
+
+      // ดึงข้อมูลจากฟอร์มมาจัดเป็นก้อน JSON
+      let formData = new FormData(form);
+      let payload = {
+        action: 'saveExpenseData',
+        expDate: formData.get('expDate'),
+        category: formData.get('category'),
+        itemName: formData.get('itemName'),
+        note: formData.get('note'),
+        amount: formData.get('amount')
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(msg => {
+        document.getElementById('output').innerHTML = `<span class="text-success">${msg}</span>`;
+        form.reset(); btn.innerHTML = 'บันทึกข้อมูล'; btn.disabled = false;
+        setTimeout(() => document.getElementById('output').innerHTML='', 3000);
+      })
+      .catch(err => {
+        document.getElementById('output').innerHTML = `<span class="text-danger">❌ ${err.message}</span>`;
+        btn.disabled = false;
+      });
+    }
+  </script>
 </body>
 </html>
