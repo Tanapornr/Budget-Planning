@@ -3,143 +3,271 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบงบประมาณ วมว.</title>
+  <title>ระบบจัดการงบประมาณ วมว.</title>
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    /* ส่วนกำหนดสไตล์หลัก */
+    /* ==========================================================
+       1. ตัวแปรโทนสีพาสเทล (Pastel Theme)
+       ========================================================== */
     :root {
-      --bg-warm: #fff8f0; /* สีพื้นหลังนุ่มนวล */
-      --nav-dark: #2b303a; /* สีแถบเมนูเข้ม */
-      --nav-text: #a0aabf; /* สีตัวอักษรในแถบเมนู */
-      --card-white: #ffffff; /* สีพื้นหลังการ์ดขาว */
-      --action-card: #f8f9fa; /* สีพื้นหลังการ์ดคำสั่งอ่อน */
-      --btn-orange: #f6b26b; /* สีส้มพาสเทล */
-      --btn-peach: #f4cccc; /* สีชมพูพาสเทล */
-      --text-main: #333333; /* สีตัวอักษรหลัก */
-      --text-nav-active: #ffffff; /* สีตัวอักษร active ในแถบเมนู */
+      --bg-main: #fcfdfe;          /* สีพื้นหลังสว่าง สะอาดตา */
+      --pastel-orange: #ffb88c;    /* ส้มอ่อนพาสเทล */
+      --pastel-pink: #ff9a9e;      /* ชมพูอ่อนพาสเทล */
+      --text-dark: #2d3748;        /* สีข้อความหลัก */
+      --text-muted: #718096;       /* สีข้อความรอง */
+      --card-bg: #ffffff;          /* สีพื้นการ์ด */
+      --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.05); /* เงานุ่มๆ */
+      --shadow-hover: 0 15px 35px rgba(255, 184, 140, 0.2); /* เงาตอนชี้เมาส์ */
     }
 
-    body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-warm); color: var(--text-main); margin: 0; padding: 0; overflow-x: hidden; }
+    body { 
+      font-family: 'Sarabun', sans-serif; 
+      background-color: var(--bg-main); 
+      color: var(--text-dark); 
+      overflow-x: hidden;
+    }
+
+    /* ==========================================================
+       2. แถบนำทาง (Navbar)
+       ========================================================== */
+    .navbar-glass {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      padding: 15px 30px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    .brand-logo {
+      font-weight: 700;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .btn-back {
+      background: #f1f5f9;
+      color: var(--text-dark);
+      border: none;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      display: none; /* ซ่อนไว้ก่อน จะโชว์ตอนเปลี่ยนหน้า */
+    }
+    .btn-back:hover {
+      background: #e2e8f0;
+      transform: translateX(-3px);
+    }
+
+    /* ==========================================================
+       3. เอฟเฟกต์เปลี่ยนหน้า (Smooth Transition)
+       ========================================================== */
+    .view-section {
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .view-section.active {
+      display: block;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ==========================================================
+       4. แดชบอร์ดส่วนกลาง (Dashboard)
+       ========================================================== */
+    .hero-section {
+      text-align: center;
+      padding: 50px 20px 30px;
+    }
+    .hero-title { font-weight: 700; font-size: 2.5rem; margin-bottom: 15px; }
+    .hero-subtitle { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    .dash-menu-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      flex-wrap: wrap;
+      padding: 20px;
+    }
+    .dash-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 40px 30px;
+      width: 320px;
+      text-align: center;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .dash-card:hover {
+      transform: translateY(-8px);
+    }
     
-    /* ส่วนแถบเมนู */
-    .navbar-custom { background-color: var(--nav-dark); padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-    .navbar-brand { color: white; font-weight: bold; font-size: 1.2rem; display: flex; align-items: center; text-decoration: none; }
-    .navbar-brand i { margin-right: 10px; color: var(--btn-orange); }
-    .navbar-nav { list-style: none; display: flex; margin: 0; padding: 0; }
-    .nav-link { color: var(--nav-text); text-decoration: none; font-size: 0.95rem; font-weight: 500; cursor: pointer; padding: 5px 15px; border-radius: 5px; transition: all 0.2s; }
-    .nav-link:hover, .nav-link.active { color: var(--text-nav-active); background-color: rgba(255, 255, 255, 0.05); }
+    /* สไตล์เฉพาะการ์ดแต่ละใบ */
+    .card-report { border-color: rgba(255, 184, 140, 0.3); }
+    .card-report:hover { box-shadow: var(--shadow-hover); border-color: var(--pastel-orange); }
+    .card-report .icon-circle { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
 
-    /* ส่วนเนื้อหาหลัก */
-    .container-fluid { padding: 30px; }
-    .main-wrapper { display: flex; flex-direction: column; align-items: center; }
+    .card-admin { border-color: rgba(255, 154, 158, 0.3); }
+    .card-admin:hover { box-shadow: 0 15px 35px rgba(255, 154, 158, 0.2); border-color: var(--pastel-pink); }
+    .card-admin .icon-circle { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
 
-    /* การ์ดส่วนกลาง */
-    .card-custom { background: var(--card-white); border-radius: 20px; padding: 40px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center; }
-    .card-title { font-size: 2.2rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-    .card-title i { margin-right: 15px; color: #4e73df; }
+    .icon-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: white;
+      margin-bottom: 25px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+    }
+    .dash-card h3 { font-weight: 700; font-size: 1.5rem; margin-bottom: 10px; }
+    .dash-card p { color: var(--text-muted); font-size: 0.95rem; margin: 0; }
 
-    /* ส่วนปุ่มคำสั่งขนาดใหญ่ */
-    .action-container { display: flex; gap: 30px; margin-top: 40px; flex-wrap: wrap; justify-content: center; }
-    .action-card { background-color: var(--action-card); border-radius: 15px; padding: 30px; width: 300px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; }
-    .action-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.07); }
-    .action-icon { font-size: 3rem; margin-bottom: 20px; padding: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 100px; height: 100px; }
-    .action-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 10px; }
-    .action-desc { font-size: 0.95rem; color: #777; font-weight: 400; text-align: center; }
-
-    /* กำหนดสีเฉพาะสำหรับแต่ละคำสั่ง */
-    .report-card { border-top: 4px solid var(--btn-orange); }
-    .report-card .action-icon { background-color: #fdf5e6; color: var(--btn-orange); }
-    .manage-card { border-top: 4px solid var(--btn-peach); }
-    .manage-card .action-icon { background-color: #fcebeb; color: var(--btn-peach); }
-
-    /* ส่วนการแสดงผลรายงานและแบบฟอร์ม (ถูกซ่อนโดยเริ่มต้น) */
-    .view-container { display: none; margin-top: 30px; }
-    .view-card { background: var(--card-white); border-radius: 15px; padding: 30px; box-shadow: 0 8px 20px rgba(0,0,0,0.03); margin-bottom: 20px; }
-    .view-title { font-size: 1.6rem; font-weight: 700; margin-bottom: 20px; color: #4e73df; display: flex; align-items: center; }
-    .view-title i { margin-right: 10px; }
-
-    /* ปุ่มนำทางกลับ */
-    .back-btn { background-color: rgba(255, 255, 255, 0.1); color: #fff; padding: 5px 15px; border-radius: 5px; font-weight: 500; text-decoration: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-    .back-btn:hover { background-color: rgba(255, 255, 255, 0.2); }
-
-    /* สไตล์ตาราง (ปรับปรุงเล็กน้อยเพื่อความสวยงาม) */
-    .table-wrapper { overflow-x: auto; max-height: 65vh; border: 1px solid #ddd; border-radius: 10px; margin-top: 20px; }
+    /* ==========================================================
+       5. ตารางรายงาน (Report View)
+       ========================================================== */
+    .table-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: var(--shadow-soft);
+      margin: 20px auto;
+      max-width: 98%;
+    }
+    .table-wrapper { overflow-x: auto; max-height: 65vh; border-radius: 12px; border: 1px solid #edf2f7; }
     #reportTable { white-space: nowrap; font-size: 0.9rem; margin-bottom: 0; width: 100%; border-collapse: collapse; }
-    #reportTable thead th { position: sticky; top: 0; background-color: #fff; color: #333; z-index: 2; font-weight: 700; border: 1px solid #ddd; padding: 10px 15px; text-align: center; vertical-align: middle; }
-    #reportTable tbody td { border: 1px solid #eee; padding: 8px 15px; color: #555; vertical-align: middle; }
-    .num-cell { text-align: right; }
-    .row-highlight td { font-weight: bold; background-color: #f1f5f9 !important; color: #000; }
     
-    /* สไตล์แถว/เซลล์ตามสีพาสเทลเดิม */
-    .bg-orange { background-color: var(--btn-orange) !important; color: #000; border: 1px solid #aaa !important; }
-    .bg-peach { background-color: var(--btn-peach) !important; color: #000; border: 1px solid #aaa !important; }
-
-    /* สไตล์แบบฟอร์ม */
-    .form-label { font-weight: 700; color: #555; margin-bottom: 5px; display: block; }
-    .form-control { width: 100%; padding: 10px 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 0.95rem; transition: border-color 0.2s; box-sizing: border-box; }
-    .form-control:focus { border-color: #4e73df; outline: none; box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.1); }
-    .btn-submit { background-color: #4e73df; color: white; padding: 12px 20px; border: none; border-radius: 10px; font-weight: 700; width: 100%; cursor: pointer; font-size: 1rem; margin-top: 20px; transition: background-color 0.2s; }
-    .btn-submit:hover { background-color: #3e5fbf; }
+    /* ปรับแต่งสีหัวตารางแบบพาสเทล */
+    .bg-orange { background-color: #ffe4d6 !important; color: #d05c18 !important; border: 1px solid #fdcbb0 !important; font-weight: 700; text-align: center; vertical-align: middle;}
+    .bg-peach { background-color: #ffeaeb !important; color: #d53f46 !important; border: 1px solid #ffd1d3 !important; font-weight: 700; text-align: center; vertical-align: middle;}
     
-    /* ส่วน Footer */
-    .footer { text-align: center; padding: 30px; color: #888; font-size: 0.85rem; margin-top: 40px; border-top: 1px solid rgba(0,0,0,0.03); }
+    #reportTable thead { position: sticky; top: 0; z-index: 4; }
+    #reportTable thead th { position: sticky; top: 0; z-index: 4; background-clip: padding-box; }
+    #reportTable thead tr:nth-child(2) th { top: 45px; } 
+    #reportTable tbody td:first-child, #reportTable thead th:first-child { position: sticky; left: 0; z-index: 5; background-color: #fff; border-right: 2px solid #edf2f7; font-weight: 700; }
+    #reportTable thead th:first-child { z-index: 6; }
+    
+    #reportTable tbody td { border: 1px solid #f0f4f8; padding: 10px 15px; vertical-align: middle; }
+    #reportTable tbody tr:hover td { background-color: #f7fafc; }
+    .num-cell { text-align: right; font-family: monospace; font-size: 1rem; }
+    .row-highlight td { font-weight: 700; background-color: #f8faff !important; color: #2b6cb0; }
 
+    /* ==========================================================
+       6. ฟอร์มจัดการเบิกจ่าย (Admin View)
+       ========================================================== */
+    .form-container {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 40px;
+      box-shadow: var(--shadow-soft);
+      margin: 20px auto;
+      max-width: 600px;
+    }
+    .form-label { font-weight: 600; color: var(--text-dark); margin-bottom: 8px; }
+    .form-control, .form-select {
+      border-radius: 12px;
+      padding: 12px 15px;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+      transition: all 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--pastel-pink);
+      box-shadow: 0 0 0 3px rgba(255, 154, 158, 0.15);
+      background-color: #fff;
+    }
+    .btn-submit {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 15px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      width: 100%;
+      margin-top: 20px;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(255, 154, 158, 0.3);
+    }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(255, 154, 158, 0.4); }
+
+    /* Loading Spinner */
+    .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 0; }
+    .custom-loader {
+      width: 50px; height: 50px;
+      border: 5px solid #f3f3f3; border-top: 5px solid var(--pastel-orange);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 15px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
 
-  <nav class="navbar-custom">
-    <a href="#" class="navbar-brand" onclick="showDashboardView()">
-      <i class="fa-solid fa-piggy-bank"></i> วมว. Budget System
-    </a>
-    <a id="backBtnInNav" class="back-btn" style="display: none;" onclick="showDashboardView()">
-      <i class="fa-solid fa-arrow-left"></i> กลับหน้ารายงาน
-    </a>
+  <nav class="navbar-glass d-flex justify-content-between align-items-center">
+    <div class="brand-logo">
+      <i class="fa-solid fa-layer-group me-2"></i> วมว. Budget
+    </div>
+    <button class="btn-back" id="btnBack" onclick="switchView('dashboard')">
+      <i class="fa-solid fa-arrow-left-long me-2"></i> หน้าหลัก
+    </button>
   </nav>
 
-  <main class="container-fluid main-wrapper">
+  <main class="container-fluid">
 
-    <section id="mainDashboard" class="card-custom">
-      <h1 class="card-title">
-        <i class="fa-solid fa-piggy-bank"></i> Budget Planning
-      </h1>
-      <p class="action-desc" style="max-width: 500px; margin-left: auto; margin-right: auto; margin-bottom: 40px;">
-        จัดการงบประมาณโครงการ วมว. ประจำปี 2569 - 2570 ของคุณอย่างง่ายดาย ทั้งการตรวจสอบรายงานและการบันทึกข้อมูลการใช้จ่าย
-      </p>
+    <section id="view-dashboard" class="view-section active">
+      <div class="hero-section">
+        <h1 class="hero-title">ระบบจัดการงบประมาณ</h1>
+        <p class="hero-subtitle">โครงการห้องเรียนวิทยาศาสตร์ (วมว.) ศูนย์มหาวิทยาลัยนเรศวร<br>ประจำปีงบประมาณ 2569 - 2570</p>
+      </div>
 
-      <div class="action-container">
-        <a id="btnNavReport" class="action-card report-card" onclick="showDashboardView()">
-          <div class="action-icon">
-            <i class="fa-solid fa-chart-pie"></i>
-          </div>
-          <h3 class="action-title">View Reports</h3>
-          <p class="action-desc">ตรวจสอบรายงานสรุปการเบิกจ่ายงบประมาณทั้งหมด</p>
+      <div class="dash-menu-container">
+        <a class="dash-card card-report" onclick="switchView('report')">
+          <div class="icon-circle"><i class="fa-solid fa-chart-line"></i></div>
+          <h3>รายงานเบิกจ่าย</h3>
+          <p>ดูตารางสรุปผลการใช้จ่ายงบประมาณคงเหลือแยกตามไตรมาส</p>
         </a>
 
-        <a id="btnNavAdmin" class="action-card manage-card" onclick="loginAdmin()">
-          <div class="action-icon">
-            <i class="fa-solid fa-dollar-sign"></i>
-          </div>
-          <h3 class="action-title">Manage Expenses</h3>
-          <p class="action-desc">บันทึกข้อมูลการใช้จ่ายใหม่หรือจัดการรายการเดิม</p>
+        <a class="dash-card card-admin" onclick="loginAdmin()">
+          <div class="icon-circle"><i class="fa-solid fa-wallet"></i></div>
+          <h3>บันทึกการเบิกจ่าย</h3>
+          <p>สำหรับเจ้าหน้าที่เพื่อบันทึกรายการใช้จ่ายและอัปเดตฐานข้อมูล</p>
         </a>
       </div>
     </section>
 
-    <section id="reportViewContainer" class="view-container main-wrapper" style="width: 100%;">
-      <div class="view-card" style="width: 100%;">
-        <h2 class="view-title">
-          <i class="fa-solid fa-chart-pie"></i> รายงานผลการใช้จ่ายงบประมาณ วมว. ปี 2569 - 2570
-        </h2>
-        
-        <div id="loading" class="text-center my-5" style="display: flex; flex-direction: column; align-items: center;">
-          <div class="spinner-border text-primary" role="status" style="border: 4px solid #f3f3f3; border-top: 4px solid #4e73df; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 15px;"></div>
-          <h5 class="mt-2" style="font-size: 1.1rem; font-weight: 500;">กำลังซิงค์ข้อมูล...</h5>
+    <section id="view-report" class="view-section">
+      <div class="table-container">
+        <h3 class="mb-4 fw-bold" style="color: var(--text-dark);">
+          <i class="fa-solid fa-chart-pie me-2" style="color: var(--pastel-orange);"></i> 
+          ตารางสรุปงบประมาณ
+        </h3>
+
+        <div id="loadingReport" class="loader-container">
+          <div class="custom-loader"></div>
+          <h5 style="color: var(--text-muted); font-weight: 500;">กำลังซิงค์ข้อมูล...</h5>
         </div>
 
         <div class="table-wrapper" id="table-wrapper" style="display: none;">
-          <table class="table table-bordered mb-0" id="reportTable">
+          <table class="table mb-0" id="reportTable">
             <thead id="tableHead">
               <tr>
                 <th rowspan="2" class="bg-peach" style="min-width: 280px;">ประเภทรายจ่าย</th>
@@ -189,27 +317,30 @@
                 <th class="bg-peach">ก.ค.</th><th class="bg-peach">ส.ค.</th><th class="bg-peach">ก.ย.</th>
               </tr>
             </thead>
-            <tbody id="tableBody">
-              </tbody>
+            <tbody id="tableBody"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-    <section id="adminViewContainer" class="view-container main-wrapper" style="width: 100%;">
-      <div class="view-card" style="max-width: 600px; width: 100%; border-top: 4px solid var(--btn-peach);">
-        <h2 class="view-title" style="color: var(--btn-peach); justify-content: center;">
-          <i class="fa-solid fa-dollar-sign"></i> บันทึกข้อมูลการใช้จ่ายใหม่
-        </h2>
+    <section id="view-admin" class="view-section">
+      <div class="form-container">
+        <div class="text-center mb-4">
+          <div class="icon-circle mx-auto" style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); width: 60px; height: 60px; font-size: 1.5rem; margin-bottom: 15px;">
+            <i class="fa-solid fa-file-invoice-dollar"></i>
+          </div>
+          <h3 class="fw-bold">บันทึกข้อมูลการเบิกจ่าย</h3>
+          <p class="text-muted">ข้อมูลจะถูกส่งตรงเข้าสู่ฐานข้อมูล Google Sheets</p>
+        </div>
         
-        <form id="budgetForm" onsubmit="handleFormSubmit(this)" style="margin-top: 20px;">
-          <div style="margin-bottom: 20px;">
-            <label class="form-label">วันที่เบิกจ่าย</label>
+        <form id="budgetForm" onsubmit="handleFormSubmit(event, this)">
+          <div class="mb-3">
+            <label class="form-label">📅 วันที่เบิกจ่าย</label>
             <input type="date" class="form-control" name="expDate" required>
           </div>
-          <div style="margin-bottom: 20px;">
-            <label class="form-label">หมวดรายจ่าย</label>
-            <select class="form-control" name="category" id="categoryDropdown" required onchange="updateItems()">
+          <div class="mb-3">
+            <label class="form-label">📂 หมวดรายจ่าย</label>
+            <select class="form-select" name="category" id="categoryDropdown" required onchange="updateItems()">
               <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
               <option value="ค่าตอบแทน">ค่าตอบแทน</option>
               <option value="ค่าใช้สอย">ค่าใช้สอย</option>
@@ -219,53 +350,85 @@
               <option value="เงินอุดหนุน">เงินอุดหนุน</option>
             </select>
           </div>
-          <div style="margin-bottom: 20px;">
-            <label class="form-label">ชื่อรายการ</label>
-            <select class="form-control" name="itemName" id="itemDropdown" required>
+          <div class="mb-3">
+            <label class="form-label">📝 ชื่อรายการ</label>
+            <select class="form-select" name="itemName" id="itemDropdown" required>
               <option value="" disabled selected>-- เลือกหมวดรายจ่ายก่อน --</option>
             </select>
           </div>
-          <div style="margin-bottom: 20px;">
-            <label class="form-label">รายละเอียด / ฎีกา</label>
-            <textarea class="form-control" name="note" rows="3" placeholder="ระบุรายละเอียดโครงการหรือเลขฎีกา (ถ้ามี)"></textarea>
+          <div class="mb-3">
+            <label class="form-label">📌 รายละเอียด / ฎีกา (ถ้ามี)</label>
+            <textarea class="form-control" name="note" rows="2" placeholder="ระบุรายละเอียดเพิ่มเติม..."></textarea>
           </div>
-          <div style="margin-bottom: 30px;">
-            <label class="form-label">จำนวนเงิน (บาท)</label>
-            <input type="number" step="0.01" class="form-control" name="amount" required placeholder="เช่น 1500.00">
+          <div class="mb-4">
+            <label class="form-label">💰 จำนวนเงิน (บาท)</label>
+            <input type="number" step="0.01" class="form-control" name="amount" required placeholder="เช่น 1500.00" style="font-size: 1.2rem; font-weight: bold; color: #d53f46;">
           </div>
+          
           <button type="submit" class="btn-submit" id="submitBtn">
-            <i class="fa-solid fa-floppy-disk" style="margin-right: 8px;"></i> บันทึกข้อมูล
+            <i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการบันทึกข้อมูล
           </button>
         </form>
-        <div id="output" class="mt-3 text-center fw-bold" style="font-weight: 700; color: green; display: none;"></div>
+        <div id="output" class="mt-4 text-center fw-bold" style="display:none; padding: 15px; border-radius: 10px;"></div>
       </div>
     </section>
 
   </main>
 
-  <footer class="footer">
-    Copyright © 2026-2027 โครงการ วมว. | All Rights Reserved.
-  </footer>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ส่วนที่แก้ไข: การจัดการการแสดงผลหน้าจอ
+    // ==========================================
+    // ⭐️ สำคัญที่สุด: ใส่ URL APPS SCRIPT ตรงนี้ ⭐️
+    // ==========================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycby2k9iUKlHO9f7EI-p0-XeFBmQ_9tNZ51yGJ9p1Gyq3Ydyuw5RrP1PooYmd4dqoGKLW/exec';
+    
     let categoryItemMap = {};
 
-    window.onload = function() {
-      // โหลดข้อมูลครั้งแรก
-      google.script.run.withSuccessHandler(renderTable).withFailureHandler(showError).getMasterReportData();
-      google.script.run.withSuccessHandler(storeMapping).getCategoryItemMapping();
-      
-      // เริ่มต้นแสดงผลหน้าหลัก (Dashboard)
-      showDashboardView();
+    // ทำงานอัตโนมัติเมื่อเปิดเว็บ
+    window.onload = async function() {
+      try {
+        // แอบดึงข้อมูลหมวดหมู่มาเตรียมไว้ก่อน
+        let mapRes = await fetch(API_URL + '?action=getCategoryItemMapping');
+        categoryItemMap = await mapRes.json();
+      } catch (err) {
+        console.error("โหลดหมวดหมู่ล้มเหลว", err);
+      }
     };
 
-    function showError(err) {
-      document.getElementById('loading').innerHTML = `<h5 style="color: red; font-weight: 700;">❌ ข้อผิดพลาด: ${err.message || err}</h5>`;
+    // 1. ระบบนำทาง (Navigation & Animation)
+    function switchView(viewName) {
+      // ซ่อนทุกหน้า
+      document.querySelectorAll('.view-section').forEach(el => {
+        el.classList.remove('active');
+      });
+      
+      // โชว์หน้าที่เลือก
+      document.getElementById('view-' + viewName).classList.add('active');
+
+      // โชว์/ซ่อน ปุ่มย้อนกลับ
+      const btnBack = document.getElementById('btnBack');
+      if(viewName === 'dashboard') {
+        btnBack.style.display = 'none';
+      } else {
+        btnBack.style.display = 'block';
+      }
+
+      // ถ้าเปิดหน้ารายงาน ให้เริ่มดึงข้อมูล
+      if(viewName === 'report') {
+        fetchTableData();
+      }
     }
 
-    function storeMapping(mapping) { categoryItemMap = mapping; }
+    // 2. ระบบป้องกันแอดมิน
+    function loginAdmin() {
+      if(prompt("🔒 กรุณาใส่รหัสผ่านแอดมิน (1234):") === "1234") { 
+        switchView('admin');
+      } else { 
+        alert("❌ รหัสผ่านไม่ถูกต้อง"); 
+      }
+    }
 
+    // 3. จัดการ Dropdown ฟอร์ม
     function updateItems() {
       var cat = document.getElementById("categoryDropdown").value;
       var itemSelect = document.getElementById("itemDropdown");
@@ -275,59 +438,30 @@
       }
     }
 
-    function loginAdmin() {
-      if(prompt("🔒 ใส่รหัสผ่านแอดมิน (1234):") === "1234") { 
-        showAdminView();
-      } else { alert("❌ รหัสผิด"); }
-    }
-
-    // ฟังก์ชันนำทางแบบใหม่
-    function showDashboardView() {
-      toggleNavItems(false);
-      hideAllViews();
-      document.getElementById('reportViewContainer').style.display = 'block'; // เริ่มต้นให้แสดงตารางเป็นส่วนแรกเมื่อโหลดหน้า
-      document.getElementById('loading').style.display = 'block'; // แสดง loader
-      document.getElementById('table-wrapper').style.display = 'none'; // ซ่อนตารางไว้ก่อน
-      google.script.run.withSuccessHandler(renderTable).withFailureHandler(showError).getMasterReportData(); // โหลดข้อมูลใหม่
-    }
-
-    function showAdminView() {
-      toggleNavItems(true);
-      hideAllViews();
-      document.getElementById('adminViewContainer').style.display = 'flex';
-    }
-
-    // ฟังก์ชันช่วยจัดการการแสดงผล
-    function hideAllViews() {
-      document.getElementById('reportViewContainer').style.display = 'none';
-      document.getElementById('adminViewContainer').style.display = 'none';
-      // ไม่ซ่อน `mainDashboard` ทั้งหมด แต่แค่ปรับเปลี่ยนสถานะของปุ่ม navigation เท่านั้น
-      // โค้ดเดิมถูกออกแบบมาให้ `mainDashboard` เป็นแค่คอนเทนเนอร์ ไม่ใช่หน้าจอทั้งหมด
-    }
-
-    function toggleNavItems(isAdminView) {
-      const backBtn = document.getElementById('backBtnInNav');
-      const btnReport = document.getElementById('btnNavReport');
-      const btnAdmin = document.getElementById('btnNavAdmin');
-
-      if (isAdminView) {
-        backBtn.style.display = 'flex';
-        btnAdmin.classList.add('active');
-        btnReport.classList.remove('active');
-      } else {
-        backBtn.style.display = 'none';
-        btnReport.classList.add('active');
-        btnAdmin.classList.remove('active');
+    // 4. ดึงข้อมูลตารางด้วย fetch (สำหรับ Vercel)
+    async function fetchTableData() {
+      document.getElementById('table-wrapper').style.display = 'none';
+      document.getElementById('loadingReport').style.display = 'flex';
+      
+      try {
+        let res = await fetch(API_URL + '?action=getMasterReportData');
+        let response = await res.json();
+        renderTable(response);
+      } catch (err) {
+        document.getElementById('loadingReport').innerHTML = `<h5 style="color:red;">❌ ดึงข้อมูลล้มเหลว: ${err.message}</h5>`;
       }
     }
 
-    // ส่วนประมวลผลตาราง (คงเดิมไว้ทั้งหมด)
     function renderTable(response) {
-      if(!response || response.status === "error") { showError(response.message); return; }
-      const data = response.data;
+      if(!response || response.status === "error") { 
+        document.getElementById('loadingReport').innerHTML = `<h5 style="color:red;">❌ ${response.message || "ไม่พบข้อมูล"}</h5>`;
+        return; 
+      }
+      
+      const data = response.data ? response.data : response;
       let tbodyHtml = '';
 
-      for (let i = 2; i < data.length; i++) { // เริ่มอ่านจากบรรทัดที่ 3 (ข้าม 0, 1)
+      for (let i = 2; i < data.length; i++) { 
         let row = data[i];
         let cellZero = String(row[0] || "");
         if(cellZero.trim() === "" && String(row[1]||"").trim() === "") continue;
@@ -338,34 +472,65 @@
         for (let j = 0; j < row.length; j++) {
           let val = row[j] || "";
           let isNum = !isNaN(String(val).replace(/,/g, '')) && String(val).trim() !== "";
+          
+          // ใส่คอมมา (,) ให้ตัวเลขเพื่อความสวยงาม
+          if(isNum && val !== "") {
+            val = Number(val).toLocaleString('th-TH', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+          }
+          
           tbodyHtml += `<td class="${isNum ? 'num-cell' : ''}">${val}</td>`;
         }
         tbodyHtml += '</tr>';
       }
 
       document.getElementById('tableBody').innerHTML = tbodyHtml;
-      document.getElementById('loading').style.display = 'none';
+      document.getElementById('loadingReport').style.display = 'none';
       document.getElementById('table-wrapper').style.display = 'block';
     }
 
-    function handleFormSubmit(form) {
+    // 5. ส่งข้อมูลบันทึกลง Sheet (POST request)
+    function handleFormSubmit(event, form) {
       event.preventDefault();
       let btn = document.getElementById('submitBtn');
       let outputDiv = document.getElementById('output');
-      btn.innerHTML = '⏳ กำลังบันทึก...'; btn.disabled = true;
+      
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> กำลังบันทึกข้อมูล...'; 
+      btn.disabled = true;
+      outputDiv.style.display = 'none';
 
-      google.script.run.withSuccessHandler(function(msg) {
-        outputDiv.innerHTML = `<i class="fa-solid fa-circle-check" style="margin-right: 5px;"></i> ${msg}`;
+      let formData = new FormData(form);
+      let payload = {
+        action: 'saveExpenseData',
+        expDate: formData.get('expDate'),
+        category: formData.get('category'),
+        itemName: formData.get('itemName'),
+        note: formData.get('note'),
+        amount: formData.get('amount')
+      };
+
+      fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(msg => {
+        outputDiv.innerHTML = `<i class="fa-solid fa-check-circle me-2"></i> ${msg}`;
         outputDiv.style.display = 'block';
-        outputDiv.style.color = 'green';
-        form.reset(); btn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right: 8px;"></i> บันทึกข้อมูล'; btn.disabled = false;
-        setTimeout(() => outputDiv.style.display = 'none', 3000);
-      }).withFailureHandler(function(err) {
-        outputDiv.innerHTML = `<i class="fa-solid fa-circle-xmark" style="margin-right: 5px;"></i> ${err.message}`;
+        outputDiv.style.backgroundColor = '#d1e7dd';
+        outputDiv.style.color = '#0f5132';
+        form.reset(); 
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการบันทึกข้อมูล'; 
+        btn.disabled = false;
+        setTimeout(() => outputDiv.style.display = 'none', 4000);
+      })
+      .catch(err => {
+        outputDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-2"></i> บันทึกไม่สำเร็จ: ${err.message}`;
         outputDiv.style.display = 'block';
-        outputDiv.style.color = 'red';
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk" style="margin-right: 8px;"></i> บันทึกข้อมูล'; btn.disabled = false;
-      }).saveExpenseData(form);
+        outputDiv.style.backgroundColor = '#f8d7da';
+        outputDiv.style.color = '#842029';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane me-2"></i> ยืนยันการบันทึกข้อมูลอีกครั้ง'; 
+        btn.disabled = false;
+      });
     }
   </script>
 </body>
