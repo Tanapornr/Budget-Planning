@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ทดสอบระบบงบประมาณ วมว.</title>
+    <style>
+        table { border-collapse: collapse; width: 100%; max-width: 600px; }
+        th, td { border: 1px solid black; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h2>ข้อมูลจากฐานข้อมูล (Google Sheets)</h2>
+    <h3 id="status" style="color: blue;">กำลังดึงข้อมูล...</h3>
+
+    <table id="myTable">
+        <tr>
+            <th>วันที่</th>
+            <th>รายการ</th>
+            <th>ประเภท</th>
+            <th>จำนวนเงิน</th>
+        </tr>
+    </table>
+
+    <script>
+        // 1. ใส่ URL ของ Apps Script ของคุณตรงนี้!
+        const url = 'https://script.google.com/macros/s/AKfycbzJCHNJM5kDV2_5Zbb2-VqCed9-8nw3i2hH-f8Yy4TSEcaMXsJ1Bb0WpcgwwoIlIDW7/exec';
+
+        // 2. เริ่มดึงข้อมูล
+        fetch(url)
+            .then(response => response.json()) // แปลงข้อมูลให้เป็นก้อน JSON
+            .then(data => {
+                document.getElementById('status').innerText = 'ดึงข้อมูลสำเร็จแล้ว! 🎉';
+                document.getElementById('status').style.color = 'green';
+                
+                const table = document.getElementById('myTable');
+                
+                // 3. วนลูปเอาข้อมูลมาสร้างเป็นแถวในตาราง
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    // ต้องพิมพ์ชื่อหัวคอลัมน์ในวงเล็บก้ามปูให้ตรงกับใน Sheet เป๊ะๆ
+                    tr.innerHTML = `
+                        <td>${row['วันที่']}</td>
+                        <td>${row['รายการ']}</td>
+                        <td>${row['ประเภท']}</td>
+                        <td>${row['จำนวนเงิน']}</td>
+                    `;
+                    table.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                document.getElementById('status').innerText = 'ดึงข้อมูลไม่สำเร็จ (เช็ค URL หรือสิทธิ์การเข้าถึง)';
+                document.getElementById('status').style.color = 'red';
+                console.error(error);
+            });
+    </script>
+</body>
+</html>
