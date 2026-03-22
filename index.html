@@ -2,56 +2,81 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>ทดสอบระบบงบประมาณ วมว.</title>
+    <title>ระบบงบประมาณ วมว.</title>
     <style>
-        table { border-collapse: collapse; width: 100%; max-width: 600px; }
-        th, td { border: 1px solid black; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
+        table { border-collapse: collapse; width: 100%; font-size: 14px; }
+        th, td { border: 1px solid black; padding: 6px; text-align: center; }
+        th { background-color: #fca503; /* สีส้มตามรูป */ color: black; }
+        .bg-light { background-color: #fdf5e6; } /* สีพื้นหลังอ่อนๆ */
     </style>
 </head>
 <body>
-    <h2>ข้อมูลจากฐานข้อมูล (Google Sheets)</h2>
     <h3 id="status" style="color: blue;">กำลังดึงข้อมูล...</h3>
 
-    <table id="myTable">
-        <tr>
-            <th>วันที่</th>
-            <th>รายการ</th>
-            <th>ประเภท</th>
-            <th>จำนวนเงิน</th>
-        </tr>
+    <table>
+        <thead>
+            <tr>
+                <th rowspan="2" style="background-color: white;">ประเภทรายจ่าย</th>
+                <th rowspan="2">งบประมาณ<br>ตามแผน2569-2570</th>
+                <th rowspan="2">เบิกจ่ายสะสมรวม</th>
+                <th rowspan="2">คงเหลือสุทธิ</th>
+                <th rowspan="2" style="background-color: #e6b8af;">ระยะเวลา</th>
+                
+                <th colspan="6" style="background-color: white;">ไตรมาส 3 / 2569</th>
+                <th colspan="6" style="background-color: white;">ไตรมาส 4 / 2569</th>
+            </tr>
+            <tr>
+                <th class="bg-light">เม.ย.</th>
+                <th class="bg-light">พ.ค.</th>
+                <th class="bg-light">มิ.ย.</th>
+                <th>รวม<br>ไตรมาส 3</th>
+                <th style="background-color: white;">เบิกจริง</th>
+                <th style="background-color: white;">คงเหลือ</th>
+                
+                <th class="bg-light">ก.ค.</th>
+                <th class="bg-light">ส.ค.</th>
+                <th class="bg-light">ก.ย.</th>
+                <th>รวม<br>ไตรมาส 4</th>
+                <th style="background-color: white;">เบิกจริง</th>
+                <th style="background-color: white;">คงเหลือ</th>
+            </tr>
+        </thead>
+        <tbody id="table-body">
+            </tbody>
     </table>
 
     <script>
-        // 1. ใส่ URL ของ Apps Script ของคุณตรงนี้!
-        const url = 'https://script.google.com/macros/s/AKfycbzJCHNJM5kDV2_5Zbb2-VqCed9-8nw3i2hH-f8Yy4TSEcaMXsJ1Bb0WpcgwwoIlIDW7/exec';
+        const url = 'https://script.google.com/macros/s/AKfycbyAXl94c7Bj9GZNEOPCOUo0p42uAKA5b4o6T1ctwoQ-ej6aj5Wi7cM_ykSNO2AyGeYK/exec';
 
-        // 2. เริ่มดึงข้อมูล
         fetch(url)
-            .then(response => response.json()) // แปลงข้อมูลให้เป็นก้อน JSON
+            .then(response => response.json())
             .then(data => {
                 document.getElementById('status').innerText = 'ดึงข้อมูลสำเร็จแล้ว! 🎉';
-                document.getElementById('status').style.color = 'green';
+                const tbody = document.getElementById('table-body');
                 
-                const table = document.getElementById('myTable');
-                
-                // 3. วนลูปเอาข้อมูลมาสร้างเป็นแถวในตาราง
+                // คราวนี้เราเรียกข้อมูลตามลำดับคอลัมน์ A=0, B=1, C=2 ไปเรื่อยๆ
                 data.forEach(row => {
                     const tr = document.createElement('tr');
-                    // ต้องพิมพ์ชื่อหัวคอลัมน์ในวงเล็บก้ามปูให้ตรงกับใน Sheet เป๊ะๆ
                     tr.innerHTML = `
-                        <td>${row['วันที่']}</td>
-                        <td>${row['รายการ']}</td>
-                        <td>${row['ประเภท']}</td>
-                        <td>${row['จำนวนเงิน']}</td>
+                        <td style="text-align: left;">${row[0]}</td> <td>${row[1]}</td> <td>${row[2]}</td> <td>${row[3]}</td> <td>${row[4]}</td> <td>${row[5]}</td>
+                        <td>${row[6]}</td>
+                        <td>${row[7]}</td>
+                        <td>${row[8]}</td>
+                        <td>${row[9]}</td>
+                        <td>${row[10]}</td>
+                        
+                        <td>${row[11]}</td>
+                        <td>${row[12]}</td>
+                        <td>${row[13]}</td>
+                        <td>${row[14]}</td>
+                        <td>${row[15]}</td>
+                        <td>${row[16]}</td>
                     `;
-                    table.appendChild(tr);
+                    tbody.appendChild(tr);
                 });
             })
             .catch(error => {
-                document.getElementById('status').innerText = 'ดึงข้อมูลไม่สำเร็จ (เช็ค URL หรือสิทธิ์การเข้าถึง)';
-                document.getElementById('status').style.color = 'red';
-                console.error(error);
+                document.getElementById('status').innerText = 'เกิดข้อผิดพลาดในการดึงข้อมูล';
             });
     </script>
 </body>
