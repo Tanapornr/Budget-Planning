@@ -15,7 +15,7 @@
     .nav-link:hover, .nav-link.active { color: white; }
     .card-custom { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px; }
     
-    /* สไตล์ตารางที่เหมือนรูปภาพเป๊ะๆ */
+    /* สไตล์ตาราง */
     .table-wrapper { overflow-x: auto; max-height: 65vh; border: 1px solid #ccc; }
     #reportTable { white-space: nowrap; font-size: 0.9rem; margin-bottom: 0; }
     
@@ -54,7 +54,7 @@
 
     <div class="card-custom p-0 overflow-hidden">
       <div id="loading" class="text-center my-5">
-        <div class="spinner-border text-primary" role="status"></div><h5 class="mt-2">กำลังซิงค์ข้อมูล...</h5>
+        <div class="spinner-border text-primary" role="status"></div><h5 class="mt-2" id="loadingText">กำลังซิงค์ข้อมูล...</h5>
       </div>
       
       <div class="table-wrapper" id="table-wrapper" style="display: none;">
@@ -64,12 +64,49 @@
               <th rowspan="2" class="bg-peach" style="min-width: 280px;">ประเภทรายจ่าย</th>
               <th colspan="3" class="bg-orange">งบประมาณ</th>
               <th rowspan="2" class="bg-peach" style="min-width: 80px;">ระยะเวลา</th>
-              </tr>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 3 / 2569</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 3</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 4 / 2569</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 4</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 1 / 2570</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 1</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 2 / 2570</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 2</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 3 / 2570</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 3</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+
+              <th colspan="3" class="bg-peach">ไตรมาส 4 / 2570</th>
+              <th rowspan="2" class="bg-peach">รวม<br>ไตรมาส 4</th>
+              <th rowspan="2" class="bg-peach">เบิกจริง</th>
+              <th rowspan="2" class="bg-peach">คงเหลือ</th>
+            </tr>
             <tr>
               <th class="bg-orange">ตามแผน2569-2570</th>
               <th class="bg-orange">เบิกจ่ายสะสมรวม</th>
               <th class="bg-orange">คงเหลือสุทธิ</th>
-              </tr>
+
+              <th class="bg-peach">เม.ย.</th><th class="bg-peach">พ.ค.</th><th class="bg-peach">มิ.ย.</th>
+              <th class="bg-peach">ก.ค.</th><th class="bg-peach">ส.ค.</th><th class="bg-peach">ก.ย.</th>
+              <th class="bg-peach">ต.ค.</th><th class="bg-peach">พ.ย.</th><th class="bg-peach">ธ.ค.</th>
+              <th class="bg-peach">ม.ค.</th><th class="bg-peach">ก.พ.</th><th class="bg-peach">มี.ค.</th>
+              <th class="bg-peach">เม.ย.</th><th class="bg-peach">พ.ค.</th><th class="bg-peach">มิ.ย.</th>
+              <th class="bg-peach">ก.ค.</th><th class="bg-peach">ส.ค.</th><th class="bg-peach">ก.ย.</th>
+            </tr>
           </thead>
           <tbody id="tableBody"></tbody>
         </table>
@@ -93,11 +130,17 @@
             <option value="" disabled selected>-- เลือกหมวดหมู่ --</option>
             <option value="ค่าตอบแทน">ค่าตอบแทน</option>
             <option value="ค่าใช้สอย">ค่าใช้สอย</option>
-            </select>
+            <option value="ค่าวัสดุ">ค่าวัสดุ</option>
+            <option value="ค่าสาธารณูปโภค">ค่าสาธารณูปโภค</option>
+            <option value="ค่าครุภัณฑ์">ค่าครุภัณฑ์</option>
+            <option value="เงินอุดหนุน">เงินอุดหนุน</option>
+          </select>
         </div>
         <div class="mb-3">
           <label class="form-label fw-bold">ชื่อรายการ</label>
-          <select class="form-select" name="itemName" id="itemDropdown" required></select>
+          <select class="form-select" name="itemName" id="itemDropdown" required>
+            <option value="" disabled selected>-- เลือกหมวดรายจ่ายก่อน --</option>
+          </select>
         </div>
         <div class="mb-3">
           <label class="form-label fw-bold">รายละเอียด / ฎีกา</label>
@@ -115,27 +158,28 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    // ⭐️ 1. ใส่ URL ของคุณตรงนี้ ⭐️
+    // ⭐️ สำคัญ: เอา URL ของ Apps Script ล่าสุด (New Version) มาใส่ตรงนี้ ⭐️
     const API_URL = 'https://script.google.com/macros/s/AKfycby2k9iUKlHO9f7EI-p0-XeFBmQ_9tNZ51yGJ9p1Gyq3Ydyuw5RrP1PooYmd4dqoGKLW/exec';
     
     let categoryItemMap = {};
 
-    // เปลี่ยนจาก google.script.run เป็นการใช้ fetch
+    // โหลดข้อมูลครั้งแรกเมื่อเปิดหน้าเว็บ
     window.onload = async function() {
       try {
-        // ดึงข้อมูล Mapping หมวดหมู่
+        // ดึงข้อมูล Mapping หมวดหมู่สำหรับ Dropdown
         let mapRes = await fetch(API_URL + '?action=getCategoryItemMapping');
         categoryItemMap = await mapRes.json();
         
         // ดึงข้อมูลตาราง
         fetchTableData();
       } catch (err) {
-        showError(err);
+        showError("เชื่อมต่อฐานข้อมูลล้มเหลว: " + err.message);
       }
     };
 
-    function showError(err) {
-      document.getElementById('loading').innerHTML = `<h5 class="text-danger">❌ ข้อผิดพลาด: ${err.message || err}</h5>`;
+    function showError(errMsg) {
+      document.getElementById('loadingText').innerHTML = `<span class="text-danger">❌ ข้อผิดพลาด: ${errMsg}</span>`;
+      document.querySelector('.spinner-border').style.display = 'none';
     }
 
     function updateItems() {
@@ -157,36 +201,55 @@
     function showDashboard() {
       document.getElementById('mainDashboard').style.display = 'block';
       document.getElementById('adminFormSection').style.display = 'none';
-      fetchTableData(); // เรียกข้อมูลใหม่ทุกครั้งที่กลับหน้าแรก
+      fetchTableData(); // รีเฟรชข้อมูลตารางทุกครั้งที่กลับมาหน้าหลัก
     }
 
+    // ฟังก์ชันดึงข้อมูลตารางจาก Apps Script
     async function fetchTableData() {
       document.getElementById('table-wrapper').style.display = 'none';
       document.getElementById('loading').style.display = 'block';
+      document.getElementById('loadingText').innerHTML = 'กำลังซิงค์ข้อมูล...';
+      document.querySelector('.spinner-border').style.display = 'inline-block';
       
       try {
         let res = await fetch(API_URL + '?action=getMasterReportData');
         let response = await res.json();
         renderTable(response);
       } catch (err) {
-        showError(err);
+        showError("ดึงข้อมูลตารางล้มเหลว: " + err.message);
       }
     }
 
+    // ฟังก์ชันวาดตาราง
     function renderTable(response) {
-      if(!response || response.status === "error") { showError(response.message); return; }
+      if(!response || response.status === "error") { 
+        showError(response.message || "ไม่พบข้อมูล"); 
+        return; 
+      }
       
-      const data = response.data;
+      // ดึงข้อมูลอาร์เรย์ออกมา
+      const data = response.data ? response.data : response;
+
+      if (!Array.isArray(data)) {
+        showError("รูปแบบข้อมูลจาก Sheet ไม่ถูกต้อง");
+        return;
+      }
+
       let tbodyHtml = '';
 
+      // เริ่มอ่านจากบรรทัดที่ 3 (index = 2) เพื่อข้ามหัวตารางใน Sheet
       for (let i = 2; i < data.length; i++) { 
         let row = data[i];
         let cellZero = String(row[0] || "");
+        
+        // ข้ามแถวที่ว่างเปล่า
         if(cellZero.trim() === "" && String(row[1]||"").trim() === "") continue;
 
+        // ไฮไลท์แถวหัวข้อหลัก
         let isMain = (cellZero.indexOf("ค่า")===0 && cellZero.indexOf("-")===-1) || cellZero.indexOf("รวม")!==-1 || cellZero.indexOf("อุดหนุน")!==-1;
         tbodyHtml += `<tr ${isMain ? 'class="row-highlight"' : ''}>`;
         
+        // วนลูปสร้างคอลัมน์ <td> ตามข้อมูลใน Sheet
         for (let j = 0; j < row.length; j++) {
           let val = row[j] || "";
           let isNum = !isNaN(String(val).replace(/,/g, '')) && String(val).trim() !== "";
@@ -200,13 +263,13 @@
       document.getElementById('table-wrapper').style.display = 'block';
     }
 
-    // ฟังก์ชันส่งข้อมูลฟอร์มด้วย fetch POST
+    // ฟังก์ชันส่งข้อมูลจากฟอร์มไปบันทึกลง Sheet
     function handleFormSubmit(event, form) {
       event.preventDefault();
       let btn = document.getElementById('submitBtn');
       btn.innerHTML = '⏳ กำลังบันทึก...'; btn.disabled = true;
 
-      // ดึงข้อมูลจากฟอร์มมาจัดเป็นก้อน JSON
+      // รวบรวมข้อมูลจากฟอร์ม
       let formData = new FormData(form);
       let payload = {
         action: 'saveExpenseData',
@@ -217,6 +280,7 @@
         amount: formData.get('amount')
       };
 
+      // ส่งข้อมูลด้วย POST
       fetch(API_URL, {
         method: 'POST',
         body: JSON.stringify(payload)
@@ -224,7 +288,9 @@
       .then(res => res.json())
       .then(msg => {
         document.getElementById('output').innerHTML = `<span class="text-success">${msg}</span>`;
-        form.reset(); btn.innerHTML = 'บันทึกข้อมูล'; btn.disabled = false;
+        form.reset(); 
+        btn.innerHTML = 'บันทึกข้อมูล'; 
+        btn.disabled = false;
         setTimeout(() => document.getElementById('output').innerHTML='', 3000);
       })
       .catch(err => {
